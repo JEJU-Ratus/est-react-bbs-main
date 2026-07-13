@@ -12,7 +12,9 @@ function Board({ data }) {
         <Form.Check />
       </td>
       <td>{data.id}</td>
-      <td>{data.title}</td>
+      <td>
+        <Link to={`/view/${data.id}`}>{data.title}</Link>
+      </td>
       <td>{data.writer}</td>
       <td>{data.date}</td>
     </tr>
@@ -62,7 +64,6 @@ export default function BoardList() {
         <Link to="/write" className="btn btn-primary ">
           입력
         </Link>
-        <Button variant="secondary">수정</Button>
         <Button variant="danger">삭제</Button>
       </div>
     </>
