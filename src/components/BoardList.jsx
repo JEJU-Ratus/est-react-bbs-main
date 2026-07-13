@@ -35,7 +35,7 @@ export default function BoardList() {
         console.error(error);
       })
       .finally(() => {
-        console.log("요청완료");
+        console.log("전체 게시글 로드");
       });
   }, []);
   return (

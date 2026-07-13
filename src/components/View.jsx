@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function View() {
+export default function View({ handleModify }) {
   const [content, setContent] = useState({
     writer: "",
     title: "",
@@ -32,9 +32,10 @@ export default function View() {
       })
       .catch(error => {
         console.error(error);
+        setIsError(true);
       })
       .finally(() => {
-        console.log("요청완료");
+        console.log("상세페이지 로드");
       });
   }, []);
   if (isError) {
@@ -48,6 +49,9 @@ export default function View() {
       </div>
     );
   }
+  const handleClick = () => {
+    handleModify(id);
+  };
   return (
     <>
       <h2>{content.title}</h2>
@@ -62,7 +66,9 @@ export default function View() {
         <Link to="/" className="btn btn-primary">
           홈
         </Link>
-        <Button variant="secondary">수정</Button>
+        <Button variant="secondary" onClick={handleClick}>
+          수정
+        </Button>
         <Button variant="danger">삭제</Button>
       </div>
     </>
