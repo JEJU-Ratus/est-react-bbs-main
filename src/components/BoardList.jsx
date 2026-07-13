@@ -4,13 +4,29 @@ import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+function Board({ data }) {
+  return (
+    <tr>
+      <td>
+        <Form.Check />
+      </td>
+      <td>{data.id}</td>
+      <td>{data.title}</td>
+      <td>{data.writer}</td>
+      <td>{data.date}</td>
+    </tr>
+  );
+}
+
 export default function BoardList() {
   const [list, setList] = useState([]);
+  // 가져오기. read에 가까운
   useEffect(() => {
     axios
       .get("http://localhost:3000/list", {})
       .then(response => {
         console.log(response.data);
+        setList(response.data);
       })
       .catch(error => {
         console.error(error);
@@ -32,24 +48,9 @@ export default function BoardList() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
-              <Form.Check disabled />
-            </td>
-            <td>1</td>
-            <td>안녕</td>
-            <td>홍길동</td>
-            <td>2026.07.02</td>
-          </tr>
-          <tr>
-            <td>
-              <Form.Check disabled />
-            </td>
-            <td>1</td>
-            <td>안녕</td>
-            <td>홍길동</td>
-            <td>2026.07.02</td>
-          </tr>
+          {list.map((item, idx) => (
+            <Board data={item} key={idx} />
+          ))}
         </tbody>
       </Table>
       <div className="d-flex gap-1 justify-content-end">
