@@ -21,7 +21,7 @@ function Board({ data }) {
   );
 }
 
-export default function BoardList() {
+export default function BoardList({ handleCancel }) {
   const [list, setList] = useState([]);
   // 가져오기. read에 가까운
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function BoardList() {
         </tbody>
       </Table>
       <div className="d-flex gap-1 justify-content-end">
-        <Link to="/write" className="btn btn-primary ">
+        <Link to="/write" className="btn btn-primary" onClick={handleCancel}>
           입력
         </Link>
         <Button variant="danger">삭제</Button>

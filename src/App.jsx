@@ -26,7 +26,7 @@ function App() {
     <div className="container">
       <h1>React BBS</h1>
       <Routes>
-        <Route path="/" element={<BoardList />} />
+        <Route path="/" element={<BoardList handleCancel={handleCancel} />} />
         <Route
           path="/write"
           element={

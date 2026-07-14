@@ -11,7 +11,6 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
     title: "",
     content: "",
   });
-  const [isError, setIsError] = useState(false);
   useEffect(() => {
     if (isModifyMode && boardId) {
       // boardId로 서버에서 글 조회 결과로 content 업데이트
@@ -21,7 +20,6 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
           // console.log(response.data);
           // response.data가 없거나, 배열의 개수가 0과 같다면
           if (!response.data || response.data.length === 0) {
-            setIsError(true);
             return;
           }
           const _data = response.data[0];
@@ -34,24 +32,32 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
         })
         .catch(error => {
           console.error(error);
-          setIsError(true);
         })
         .finally(() => {
           console.log("수정페이지 로드");
         });
     }
   }, []);
+
+  const validate = e => {
+    const name = e.target.name.value.trim();
+    const title = e.target.title.value.trim();
+    const content = e.target.content.value.trim();
+    if (!name || !title || !content) {
+      alert("모든 내용을 작성해주세요.");
+      return null;
+    }
+    return { name, title, content };
+  };
   // 쓰기
   const write = e => {
     e.preventDefault();
+    const formData = validate(e);
+    if (!formData) return;
 
     // 새로운 값 추가.create(POST 이용)
     axios
-      .post("http://localhost:3000/write", {
-        name: e.target.name.value,
-        title: e.target.title.value,
-        content: e.target.content.value,
-      })
+      .post("http://localhost:3000/write", formData)
       .then(() => {
         handleCancel();
         navigate("/");
@@ -66,13 +72,12 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
   // 수정
   const update = e => {
     e.preventDefault();
-
+    const formData = validate(e);
+    if (!formData) return;
     // 새로운 값 추가.create(POST 이용)
     axios
       .post("http://localhost:3000/update", {
-        name: e.target.name.value,
-        title: e.target.title.value,
-        content: e.target.content.value,
+        ...formData,
         id: boardId,
       })
       .then(() => {
@@ -102,6 +107,7 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
             name="name"
             defaultValue={content.name}
             placeholder="이름을 입력하세요."
+            required
           />
         </Form.Group>
         <Form.Group className="mb-3" controlId="title">
@@ -111,11 +117,18 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
             name="title"
             defaultValue={content.title}
             placeholder="제목을 입력하세요."
+            required
           />
         </Form.Group>
         <Form.Group className="mb-3" controlId="content">
           <Form.Label>내용</Form.Label>
-          <Form.Control as="textarea" name="content" defaultValue={content.content} rows={3} />
+          <Form.Control
+            as="textarea"
+            name="content"
+            defaultValue={content.content}
+            rows={3}
+            required
+          />
         </Form.Group>
         <div className="d-flex gap-1 justify-content-end">
           <Button variant="primary" type="submit">
