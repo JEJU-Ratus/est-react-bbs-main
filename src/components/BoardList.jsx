@@ -2,14 +2,18 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router";
 
-function Board({ data }) {
+function Board({ data, onCheckBoxChange }) {
   return (
     <tr>
       <td>
-        <Form.Check />
+        <Form.Check
+          onChange={e => {
+            onCheckBoxChange(e.target.checked, data.id);
+          }}
+        />
       </td>
       <td>{data.id}</td>
       <td>
@@ -22,9 +26,11 @@ function Board({ data }) {
 }
 
 export default function BoardList({ handleCancel }) {
+  console.log("로딩");
   const [list, setList] = useState([]);
-  // 가져오기. read에 가까운
-  useEffect(() => {
+  const [checkList, setCheckList] = useState([]);
+
+  const getList = useCallback(() => {
     axios
       .get("http://localhost:3000/list", {})
       .then(response => {
@@ -38,6 +44,39 @@ export default function BoardList({ handleCancel }) {
         console.log("전체 게시글 로드");
       });
   }, []);
+  // 가져오기. read에 가까운
+  useEffect(() => {
+    getList();
+  }, [getList]);
+  // check 해서 삭제하기(체크된 id 배열에 담기)
+  const onCheckBoxChange = (checked, id) => {
+    setCheckList(prev => {
+      if (checked) {
+        return [...prev, id];
+      } else {
+        return prev.filter(item => item !== id);
+      }
+    });
+  };
+  const handleDelete = () => {
+    if (checkList.length === 0) {
+      alert("삭제 할 글을 선택해주세요.");
+      return;
+    } else {
+      const boardIdList = checkList.join();
+      axios
+        .post("http://localhost:3000/deleteselect", { boardIdList })
+        .then(() => {
+          getList();
+        })
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          console.log("삭제 완료");
+        });
+    }
+  };
   return (
     <>
       <Table striped bordered hover>
@@ -56,7 +95,9 @@ export default function BoardList({ handleCancel }) {
               <td colSpan={5}>글이 없습니다.</td>
             </tr>
           ) : (
-            list.map((item, idx) => <Board data={item} key={idx} />)
+            list.map((item, idx) => (
+              <Board data={item} key={idx} onCheckBoxChange={onCheckBoxChange} />
+            ))
           )}
         </tbody>
       </Table>
@@ -64,7 +105,9 @@ export default function BoardList({ handleCancel }) {
         <Link to="/write" className="btn btn-primary" onClick={handleCancel}>
           입력
         </Link>
-        <Button variant="danger">삭제</Button>
+        <Button variant="danger" onClick={handleDelete}>
+          삭제
+        </Button>
       </div>
     </>
   );
