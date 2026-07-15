@@ -10,6 +10,7 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
     name: "",
     title: "",
     content: "",
+    image: null,
   });
   useEffect(() => {
     if (isModifyMode && boardId) {
@@ -49,15 +50,29 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
     }
     return { name, title, content };
   };
+  const createFormData = _validatedData => {
+    const _formData = new FormData();
+    _formData.append("writer", _validatedData.name);
+    _formData.append("title", _validatedData.title);
+    _formData.append("content", _validatedData.content);
+    if (content.image) {
+      _formData.append("image", content.image);
+    }
+    return _formData;
+  };
   // 쓰기
   const write = e => {
     e.preventDefault();
-    const formData = validate(e);
-    if (!formData) return;
+    const validatedData = validate(e);
+    if (!validatedData) return;
+
+    const formData = createFormData(validatedData);
 
     // 새로운 값 추가.create(POST 이용)
     axios
-      .post("http://localhost:3000/write", formData)
+      .post("http://localhost:3000/write", formData, {
+        headers: { "Content-type": "multipart/form-data" },
+      })
       .then(() => {
         handleCancel();
         navigate("/");
@@ -72,14 +87,23 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
   // 수정
   const update = e => {
     e.preventDefault();
-    const formData = validate(e);
-    if (!formData) return;
+    const validatedData = validate(e);
+    if (!validatedData) return;
+
+    const formData = createFormData(validatedData);
+
     // 새로운 값 추가.create(POST 이용)
     axios
-      .post("http://localhost:3000/update", {
-        ...formData,
-        id: boardId,
-      })
+      .post(
+        "http://localhost:3000/update",
+        {
+          ...formData,
+          id: boardId,
+        },
+        {
+          headers: { "Content-type": "multipart/form-data" },
+        },
+      )
       .then(() => {
         handleCancel();
         navigate("/");
@@ -95,6 +119,13 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
   const handleClick = () => {
     handleCancel();
     navigate(`/view/${boardId}`);
+  };
+  const handleImageChange = e => {
+    const file = e.target.files[0];
+    setContent(prev => ({
+      ...prev,
+      image: file,
+    }));
   };
   return (
     <>
@@ -128,6 +159,15 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
             defaultValue={content.content}
             rows={3}
             required
+          />
+        </Form.Group>
+        <Form.Group controlId="formFile" className="mb-3">
+          <Form.Label>이미지 첨부</Form.Label>
+          <Form.Control
+            type="file"
+            name="attachment"
+            accept="image/*"
+            onChange={handleImageChange}
           />
         </Form.Group>
         <div className="d-flex gap-1 justify-content-end">
