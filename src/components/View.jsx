@@ -83,7 +83,11 @@ export default function View({ handleModify }) {
       {content.content}
       {content.image && (
         <div>
-          <img src={`http://localhost:3000/${content.image}`} alt={content.title} />
+          <img
+            src={`http://localhost:3000/${content.image}`}
+            alt={content.title}
+            style={{ maxWidth: "80%" }}
+          />
         </div>
       )}
       <hr />
