@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Write({ isModifyMode, boardId, handleCancel }) {
   let navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
     if (isModifyMode && boardId) {
       // boardId로 서버에서 글 조회 결과로 content 업데이트
       axios
-        .get(`http://localhost:3000/view?id=${boardId}`)
+        .get(`${API_URL}/view?id=${boardId}`)
         .then(response => {
           // console.log(response.data);
           // response.data가 없거나, 배열의 개수가 0과 같다면
@@ -84,7 +85,7 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
 
     // 새로운 값 추가.create(POST 이용)
     axios
-      .post("http://localhost:3000/write", formData, {
+      .post(`${API_URL}/write`, formData, {
         headers: { "Content-type": "multipart/form-data" },
       })
       .then(() => {
@@ -108,7 +109,7 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
 
     // 새로운 값 추가.create(POST 이용)
     axios
-      .post("http://localhost:3000/update", formData, {
+      .post(`${API_URL}/update`, formData, {
         headers: { "Content-type": "multipart/form-data" },
       })
       .then(() => {
@@ -180,7 +181,7 @@ export default function Write({ isModifyMode, boardId, handleCancel }) {
         {content.image_path && (
           <div>
             <img
-              src={`http://localhost:3000/${content.image_path}`}
+              src={`${API_URL}/${content.image_path}`}
               alt={content.title}
               style={{ maxWidth: "200px" }}
             />

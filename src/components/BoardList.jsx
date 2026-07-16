@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Board({ data, onCheckBoxChange }) {
   return (
@@ -32,7 +33,7 @@ export default function BoardList({ handleCancel }) {
 
   const getList = useCallback(() => {
     axios
-      .get("http://localhost:3000/list", {})
+      .get(`${API_URL}/list`, {})
       .then(response => {
         console.log(response.data);
         setList(response.data);
@@ -65,7 +66,7 @@ export default function BoardList({ handleCancel }) {
     } else {
       const boardIdList = checkList.join();
       axios
-        .post("http://localhost:3000/deleteselect", { boardIdList })
+        .post(`${API_URL}/deleteselect`, { boardIdList })
         .then(() => {
           getList();
         })

@@ -2,6 +2,7 @@ import Button from "react-bootstrap/Button";
 import { Link, useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function View({ handleModify }) {
   const [content, setContent] = useState({
@@ -16,7 +17,7 @@ export default function View({ handleModify }) {
   let navigate = useNavigate();
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/view?id=${id}`)
+      .get(`${API_URL}/view?id=${id}`)
       .then(response => {
         // console.log(response.data);
         // response.data가 없거나, 배열의 개수가 0과 같다면
@@ -58,7 +59,7 @@ export default function View({ handleModify }) {
   const handleDelete = () => {
     if (window.confirm("정말 삭제할까요?")) {
       axios
-        .post("http://localhost:3000/delete", {
+        .post(`${API_URL}:3000/delete`, {
           id: id,
         })
         .then(() => {
@@ -84,7 +85,7 @@ export default function View({ handleModify }) {
       {content.image && (
         <div>
           <img
-            src={`http://localhost:3000/${content.image}`}
+            src={`${API_URL}/${content.image}`}
             alt={content.title}
             style={{ maxWidth: "80%" }}
           />
