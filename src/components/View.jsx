@@ -59,7 +59,7 @@ export default function View({ handleModify }) {
   const handleDelete = () => {
     if (window.confirm("정말 삭제할까요?")) {
       axios
-        .post(`${API_URL}:3000/delete`, {
+        .post(`${API_URL}/delete`, {
           id: id,
         })
         .then(() => {
